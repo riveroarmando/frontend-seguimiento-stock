@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.table {
+  width: 85%;
+}
+
+.spinner-container{
+  display: flex;
+  justify-content: center;
+}
+
+.table-estilos{
+  margin-top: 20px;
+  tr{
+    height: 25px;
+  }
+  tr:hover{
+    background: whitesmoke;
+    cursor: pointer;
+  }
+}
+
+.mat-column-cliente{
+  width: 8%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-producto{
+  width: 8%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-nombre_tarea{
+  width: 50%;
+  max-width: 600px;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: left;
+}
+
+.mat-column-cantidad{
+  width: 10%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-unidad{
+  width: 8%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-fecha{
+  width: 16%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
