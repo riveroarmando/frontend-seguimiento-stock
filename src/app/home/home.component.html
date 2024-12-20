@@ -1,45 +1,17 @@
-<mat-sidenav-container fullscreen>
-
-    <mat-sidenav #sidenav>
-
-        <mat-nav-list (click)="sidenav.close()">
-
-            <a mat-list-item routerLink="/home/task-list">
-                <mat-icon>list</mat-icon>
-                <span>Listado de trabajos</span>
-            </a>
-
-            <a mat-list-item routerLink="/home/dashboard">
-                <mat-icon>assessment</mat-icon>
-                <span>Dashboard</span>
-            </a>
-
-            <a mat-list-item  routerLink="/home/administracion">
-                <mat-icon>settings</mat-icon>
-                <span>Administracion</span>
-            </a>
-
-            <a mat-list-item (click)="logout()">
-                <mat-icon>account_circle</mat-icon>
-                <span>Logout</span>
-            </a>
-
-        </mat-nav-list>
-
+<mat-toolbar class="mat-elevation-z3">
+    <button mat-icon-button (click)="collapsed.set(!collapsed())">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-toolbar>
+  
+  <mat-sidenav-container>
+  
+    <mat-sidenav opened mode="side" [style.width]="sidenavWidth()">
+      <app-menu [collapsed]="collapsed()"></app-menu>
     </mat-sidenav>
-
-    <mat-sidenav-content>
-
-        <mat-toolbar color="primary">
-
-            <button mat-fab color="primary" (click)="sidenav.open()">
-                <mat-icon>menu</mat-icon>
-            </button>
-
-        </mat-toolbar>
-
-        <router-outlet></router-outlet>
-
+  
+    <mat-sidenav-content class="content" [style.margin-left]="sidenavWidth()">
+      <router-outlet />
     </mat-sidenav-content>
-
-</mat-sidenav-container>
+  
+  </mat-sidenav-container>

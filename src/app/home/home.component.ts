@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { RouterOutlet } from '@angular/router';
 import { RouterLinkActive } from '@angular/router';
 
 import { SecurityService } from '../services/security.services';
@@ -20,10 +21,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 
+/* Componente custom para el sidenav */
+import { MenuComponent } from './menu/menu.component';
+
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, RouterOutlet, MatSidenavModule, MatToolbarModule, MatListModule, MatIconModule, MatButtonModule, MatMenuModule, RouterLink],
+  imports: [RouterOutlet, MatToolbarModule, MatSidenavModule, MatButtonModule, MatIconModule, MenuComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   providers: [SecurityService]
@@ -41,6 +46,10 @@ export class HomeComponent {
     this.usuario=this._securitydService.usuario;
     this.url=Global.url;
   }
+
+  /* Codigo para la parte de colapsar el menu */
+  collapsed = signal(false);
+  sidenavWidth = computed(()=> this.collapsed() ? '65px': '250px');
 
   ngOnInit(): void {
     

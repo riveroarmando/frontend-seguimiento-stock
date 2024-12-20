@@ -1,3 +1,4 @@
+
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -8,7 +9,7 @@ import { DatePipe } from '@angular/common';
 
 import { SecurityService } from '../services/security.services';
 import { UserService } from '../services/user.services';
-import { TaskListService } from '../services/task-list.services.';
+import { ReportsService } from '../services/reports.services.';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../services/global';
@@ -32,20 +33,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatTabsModule} from '@angular/material/tabs';
 
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
 
+import { ReportsByProductsComponent } from "../reports-by-products/reports-by-products.component";
+import { ReportsByClientsComponent } from "../reports-by-clients/reports-by-clients.component";
+
 @Component({
-  selector: 'app-task-list',
+  selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule],
-  templateUrl: './task-list.component.html',
-  styleUrl: './task-list.component.scss',
-  providers: [UserService, SecurityService, TaskListService, provideNativeDateAdapter()]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HttpClientModule, MatTabsModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule, ReportsByProductsComponent, ReportsByClientsComponent],
+  templateUrl: './reports.component.html',
+  styleUrl: './reports.component.scss',
+  providers: [UserService, SecurityService, ReportsService, provideNativeDateAdapter()]
 })
-export class TaskListComponent implements OnInit, AfterViewInit {
+export class ReportsComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = ['cliente', 'producto', 'nombre_tarea', 'cantidad', 'unidad', 'fecha_creacion'];
   public url: string;
   public data: Tarea[] = [];
@@ -53,9 +58,10 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   public totalRecords: number = 0;
   public pageLength: number = 25;
   public numberOfPages: number = 0;
-  public isLoadingResults: boolean = true;
   public resultsLength = 0;
-  public isRateLimitReached = false;
+  //Clients
+  public isLoadingResultsClients: boolean = true;
+  public isRateLimitReachedClients = false;
 
   //String que levantan las listas de los menu desplegables
   public clientes: Client[] = [];
@@ -90,7 +96,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   constructor(
     private _userService: UserService,
     private _securityService: SecurityService,
-    private _taskListService: TaskListService,
+    private _reportsService: ReportsService,
     private _router: Router,
     private _formBuilder: FormBuilder
   ) {
@@ -107,22 +113,13 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadClients();
+    //this.loadClients();
   }
 
   /*********************************TABLA*********************************************/
 
-  /*applyFilter(event: Event) {
-    //const filterValue = (event.target as HTMLInputElement).value;
-    //this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    //if (this.dataSource.paginator) {
-    //  this.dataSource.paginator.firstPage();
-    //}
-  }*/
-
   loadClients() {
-    this._taskListService.getClients()
+    this._reportsService.getClients()
       .pipe(
         tap(data => {
           this.clientes = data;
@@ -136,15 +133,15 @@ export class TaskListComponent implements OnInit, AfterViewInit {
           this._router.navigateByUrl("/");
           return throwError(err);
         }),
-        finalize(() => this.isLoadingResults = false)
+        finalize(() => {this.isLoadingResultsClients = false})
       )
       .subscribe();
   }
 
   loadTaskList() {
 
-    this.isLoadingResults = true;
-
+    this.isLoadingResultsClients = true;
+    
     let bodydata: TaskSearch = {
       cliente: "",
       fecha_fin: "",
@@ -154,7 +151,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
       numero_pagina: this.paginator?.pageIndex ?? 1
     };
 
-    this._taskListService.getTasksList(bodydata)
+    this._reportsService.getTasksList(bodydata)
       .pipe(
         tap(data => {
           this.data = data.tareas;
@@ -169,54 +166,14 @@ export class TaskListComponent implements OnInit, AfterViewInit {
           this._router.navigateByUrl("/");
           return throwError(err);
         }),
-        finalize(() => this.isLoadingResults = false)
+        finalize(() => this.isLoadingResultsClients = false)
       )
       .subscribe();
   };
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-
-    merge(this.sort.sortChange, this.paginator.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          let bodydata: TaskSearch = {
-            cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
-            fecha_fin: "",
-            fecha_inicio: "",
-            producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
-            longitud_pagina: this.paginator?.pageSize,
-            numero_pagina: this.paginator?.pageIndex + 1
-          };
-          return this._taskListService.getTasksList(bodydata)
-            .pipe(
-              catchError(() => observableOf(null))
-            );
-        }),
-        map(data => {
-          this.pageNumber = data?.numero_pagina ?? 1;
-          this.totalRecords = data?.total_registros ?? 0;
-          this.pageLength = this.paginator?.pageSize;
-          this.numberOfPages = data?.cantidad_paginas ?? 0;
-          // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = data === null;
-
-          if (data === null) {
-            return [];
-          }
-
-          // Only refresh the result length if there is new data. In case of rate
-          // limit errors, we do not want to reset the paginator to zero, as that
-          // would prevent users from re-triggering requests.
-          this.resultsLength = data.total_registros;
-          return data.tareas;
-        }),
-      )
-      .subscribe(data => (this.data = data));
+    
   }
 
   findTasks() {
@@ -227,7 +184,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
     let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
     let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";
 
-    this.isLoadingResults = true;
+    this.isLoadingResultsClients = true;
 
     let bodydata: TaskSearch = {
       cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
@@ -238,7 +195,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
       numero_pagina: 1
     };
 
-    this._taskListService.getTasksListFilter(bodydata)
+    this._reportsService.getTasksListFilter(bodydata)
       .pipe(
         tap(data => {
           this.data = data.tareas;
@@ -252,13 +209,13 @@ export class TaskListComponent implements OnInit, AfterViewInit {
           alert("Error cargando los datos de Tareas ");
           return throwError(err);
         }),
-        finalize(() => this.isLoadingResults = false)
+        finalize(() => this.isLoadingResultsClients = false)
       )
       .subscribe();
   }
 
   onChangeClient() {
-    this._taskListService.getProducts(this.selectedClient)
+    this._reportsService.getProducts(this.selectedClient)
       .pipe(
         tap(product => {
           this.productos = product;
@@ -271,7 +228,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
         }),
         finalize(() => {
 
-          this.isLoadingResults = false;
+          this.isLoadingResultsClients = false;
         })
       )
       .subscribe();

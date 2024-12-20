@@ -8,10 +8,11 @@ import { SecurityService } from "./security.services";
 import { TaskResult } from "../interfaces/tareas.interfaces";
 import { TaskSearch } from "../interfaces/task-search.interfaces";
 import { Client } from "../interfaces/client.interfaces";
-import { Product } from "../interfaces/product.interface";
+import { Product, ProductsSearch } from "../interfaces/product.interface";
+import { ProductsResult } from "../interfaces/product.interface";
 
 @Injectable()
-export class TaskListService {
+export class ReportsService {
     public url: string;
     private _usuario!: User;
     private httpHeaders = new HttpHeaders().set('content-type', 'application/json');
@@ -108,6 +109,82 @@ export class TaskListService {
             headers: this.agregarAuthorizationHeader()
         });
 
+    }
+
+    getProductsResult(bodydata: TaskSearch): Observable<TaskResult>{
+        let find = "tareas?";
+        if(bodydata.cliente){
+            find = find + "cliente=" + bodydata.cliente + "&";
+        }
+        if(bodydata.producto){
+            find = find + "producto=" + bodydata.producto + "&";
+        }
+        if(bodydata.fecha_inicio){
+            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
+        }
+        if(bodydata.fecha_fin){
+            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
+        }
+        if(bodydata.longitud_pagina){
+            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
+        }
+        if(bodydata.numero_pagina){
+            find = find + "numero_pagina=" + bodydata.numero_pagina;
+        }
+
+        console.log(this.url+ find);
+        return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+    }
+
+    getReportsList(bodydata: ProductsSearch): Observable<ProductsResult[]>{
+
+        let find = "reportes?";
+        if(bodydata.cliente){
+            find = find + "cliente=" + bodydata.cliente + "&";
+        }
+        if(bodydata.producto){
+            find = find + "producto=" + bodydata.producto + "&";
+        }
+        if(bodydata.fecha_inicio){
+            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
+        }
+        if(bodydata.fecha_fin){
+            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
+        }
+        if(bodydata.tipo){
+            find = find + "tipo=" + bodydata.tipo + "&";
+        }
+        if(bodydata.formato){
+            find = find + "formato=" + bodydata.formato;
+        }
+        
+        return this._http.get<ProductsResult[]>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+
+    }
+
+    getReportsListFilter(bodydata: ProductsSearch): Observable<ProductsResult[]>{
+        let find = "reportes?";
+        if(bodydata.cliente){
+            find = find + "cliente=" + bodydata.cliente + "&";
+        }
+        if(bodydata.producto){
+            find = find + "producto=" + bodydata.producto + "&";
+        }
+        if(bodydata.fecha_inicio){
+            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
+        }
+        if(bodydata.fecha_fin){
+            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
+        }
+        if(bodydata.tipo){
+            find = find + "tipo=" + bodydata.tipo + "&";
+        }
+        if(bodydata.formato){
+            find = find + "formato=" + bodydata.formato;
+        }
+
+        console.log(this.url+ find);
+        return this._http.get<ProductsResult[]>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
     }
 
     /**************************************************************************************************************/

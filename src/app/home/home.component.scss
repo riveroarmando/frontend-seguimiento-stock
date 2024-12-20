@@ -1,11 +1,16 @@
-mat-nav-list a mat-icon{
-    font-size: 24px;
-    line-height: 28px;
+mat-sidenav-container{
+    height: calc(100vh - 64px);
 }
 
-mat-nav-list a span{
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 20px;
-    margin-left: 20px;
+mat-sidenav, mat-sidenav-content{
+    transition: all 500ms ease-in-out;
+}
+
+mat-toolbar{
+    position: relative;
+    z-index: 0;
+}
+
+.content{
+    padding: 24px;
 }

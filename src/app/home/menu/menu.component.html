@@ -1,0 +1,18 @@
+<div class="sidenav-header">
+    <img [height]="profilePicSize()" [width]="profilePicSize()" src="../../../assets/img/default_colaborador.png" alt="">
+    <div class="header-text" [class.hide-header-text]="sideNavCollapsed()">
+        <h2>Posicion</h2>
+        <p>Armando Rivero</p>
+    </div>
+</div>
+<mat-nav-list>
+
+    @for (item of menuItems(); track item.label) {
+        <app-menu-item [item]="item" [collapsed]="sideNavCollapsed()"></app-menu-item>
+    }
+
+    <a mat-list-item class="end">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Salir</span>
+    </a>
+</mat-nav-list>
