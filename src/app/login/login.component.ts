@@ -22,8 +22,6 @@ import {MatButtonModule} from '@angular/material/button';
   providers: [UserService, SecurityService]
 })
 export class LoginComponent implements OnInit, DoCheck, OnDestroy {
-  //public userLogin: String;
-  //public passwordLogin: String;
   public status: string;
   public url: string;
 
@@ -46,20 +44,16 @@ export class LoginComponent implements OnInit, DoCheck, OnDestroy {
     private _router: Router,
     private _formBuilder: FormBuilder
   ) {
-    //this.userLogin = "";
-    //this.passwordLogin = "";
     this.status = "";
     this.url = Global.url;
   }
 
 
   get usuarioNombre(){
-    //console.log(this.formularioColaborador.controls['NOMBRE_COLABORADOR']);
     return this.formularioUsuario.controls['NOMBRE_USUARIO'];
   }
 
   get password(){
-    //console.log(this.formularioColaborador.controls['NOMBRE_COLABORADOR']);
     return this.formularioUsuario.controls['PASSWORD'];
   }
 

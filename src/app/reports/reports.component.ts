@@ -45,7 +45,7 @@ import { ReportsByClientsComponent } from "../reports-by-clients/reports-by-clie
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HttpClientModule, MatTabsModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule, ReportsByProductsComponent, ReportsByClientsComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HttpClientModule, MatTabsModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss',
   providers: [UserService, SecurityService, ReportsService, provideNativeDateAdapter()]

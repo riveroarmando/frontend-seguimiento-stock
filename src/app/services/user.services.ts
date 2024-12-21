@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, throwError } from 'rxjs';
 import { User } from "../models/user";
+import { UserInterface } from "../interfaces/user.interface";
+import { UserResponse } from "../interfaces/user.interface";
 import { Global } from "./global";
 import { Router } from '@angular/router';
 import { SecurityService } from "./security.services";
@@ -49,10 +51,10 @@ export class UserService {
     }
 
     /**************************************************************************************************************/
-    saveColaborador(project: User): Observable<any> {
-        let parametros = JSON.stringify(project);
+    newUser(userData: UserInterface): Observable<UserResponse> {
+        let parametros = JSON.stringify(userData);
         
-        return this._http.post(this.url + 'alta-colaborador', parametros, { headers: this.agregarAuthorizationHeader() });
+        return this._http.post<UserResponse>(this.url + 'usuarios', parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
 
