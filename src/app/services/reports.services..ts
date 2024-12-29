@@ -10,6 +10,9 @@ import { TaskSearch } from "../interfaces/task-search.interfaces";
 import { Client } from "../interfaces/client.interfaces";
 import { Product, ProductsSearch } from "../interfaces/product.interface";
 import { ProductsResult } from "../interfaces/product.interface";
+import { ReportSearch } from "../interfaces/report.interface";
+import { ClientReportResult } from "../interfaces/report.interface";
+import { ProductReportResult } from "../interfaces/report.interface";
 
 @Injectable()
 export class ReportsService {
@@ -33,67 +36,6 @@ export class ReportsService {
         return this.httpHeaders;
     }
     
-    getTasksList(bodydata: TaskSearch): Observable<TaskResult>{
-
-        let find = "tareas?";
-        if(bodydata.cliente){
-            find = find + "cliente=" + bodydata.cliente + "&";
-        }
-        if(bodydata.producto){
-            find = find + "producto=" + bodydata.producto + "&";
-        }
-        if(bodydata.fecha_inicio){
-            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
-        }
-        if(bodydata.fecha_fin){
-            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
-        }
-        if(bodydata.longitud_pagina){
-            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
-        }
-        if(bodydata.numero_pagina){
-            find = find + "numero_pagina=" + bodydata.numero_pagina;
-        }
-    
-        return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
-
-        /*return this._http.get<TaskResult>(this.url+ "tareas", {
-            params: new HttpParams()
-            .set('cliente', bodydata.cliente)
-            .set('producto', bodydata.producto)
-            .set('fecha_inicio', bodydata.fecha_inicio)
-            .set('fecha_fin', bodydata.fecha_fin)
-            .set('longitud_pagina', bodydata.longitud_pagina)
-            .set('numero_pagina', bodydata.numero_pagina),
-            headers: this.agregarAuthorizationHeader()
-        });*/
-    }
-
-    getTasksListFilter(bodydata: TaskSearch): Observable<TaskResult>{
-        let find = "tareas?";
-        if(bodydata.cliente){
-            find = find + "cliente=" + bodydata.cliente + "&";
-        }
-        if(bodydata.producto){
-            find = find + "producto=" + bodydata.producto + "&";
-        }
-        if(bodydata.fecha_inicio){
-            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
-        }
-        if(bodydata.fecha_fin){
-            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
-        }
-        if(bodydata.longitud_pagina){
-            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
-        }
-        if(bodydata.numero_pagina){
-            find = find + "numero_pagina=" + bodydata.numero_pagina;
-        }
-
-        console.log(this.url+ find);
-        return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
-    }
-
     getClients(): Observable<Client[]>{
 
         return this._http.get<Client[]>(this.url+ 'clientes', {headers: this.agregarAuthorizationHeader()});
@@ -111,8 +53,9 @@ export class ReportsService {
 
     }
 
-    getProductsResult(bodydata: TaskSearch): Observable<TaskResult>{
-        let find = "tareas?";
+    getReportsList(bodydata: ReportSearch): Observable<ClientReportResult>{
+
+        let find = "reportes?";
         if(bodydata.cliente){
             find = find + "cliente=" + bodydata.cliente + "&";
         }
@@ -124,6 +67,43 @@ export class ReportsService {
         }
         if(bodydata.fecha_fin){
             find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
+        }
+        if(bodydata.tipo){
+            find = find + "tipo=" + bodydata.tipo + "&";
+        }
+        if(bodydata.formato){
+            find = find + "formato=" + bodydata.formato + "&";;
+        }
+        if(bodydata.longitud_pagina){
+            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";;
+        }
+        if(bodydata.numero_pagina){
+            find = find + "numero_pagina=" + bodydata.numero_pagina;
+        }
+        
+        return this._http.get<ClientReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+
+    }
+
+    getReportsListFilter(bodydata: ReportSearch): Observable<ClientReportResult>{
+        let find = "reportes?";
+        if(bodydata.cliente){
+            find = find + "cliente=" + bodydata.cliente + "&";
+        }
+        if(bodydata.producto){
+            find = find + "producto=" + bodydata.producto + "&";
+        }
+        if(bodydata.fecha_inicio){
+            find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
+        }
+        if(bodydata.fecha_fin){
+            find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
+        }
+        if(bodydata.tipo){
+            find = find + "tipo=" + bodydata.tipo + "&";
+        }
+        if(bodydata.formato){
+            find = find + "formato=" + bodydata.formato + "&";
         }
         if(bodydata.longitud_pagina){
             find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
@@ -132,11 +112,13 @@ export class ReportsService {
             find = find + "numero_pagina=" + bodydata.numero_pagina;
         }
 
-        console.log(this.url+ find);
-        return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+        
+        //console.log(this.url+ find);
+        return this._http.get<ClientReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
     }
 
-    getReportsList(bodydata: ProductsSearch): Observable<ProductsResult[]>{
+
+    getReportsListProduct(bodydata: ReportSearch): Observable<ProductReportResult>{
 
         let find = "reportes?";
         if(bodydata.cliente){
@@ -155,14 +137,20 @@ export class ReportsService {
             find = find + "tipo=" + bodydata.tipo + "&";
         }
         if(bodydata.formato){
-            find = find + "formato=" + bodydata.formato;
+            find = find + "formato=" + bodydata.formato + "&";;
+        }
+        if(bodydata.longitud_pagina){
+            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";;
+        }
+        if(bodydata.numero_pagina){
+            find = find + "numero_pagina=" + bodydata.numero_pagina;
         }
         
-        return this._http.get<ProductsResult[]>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+        return this._http.get<ProductReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
 
     }
 
-    getReportsListFilter(bodydata: ProductsSearch): Observable<ProductsResult[]>{
+    getReportsListFilterProduct(bodydata: ReportSearch): Observable<ProductReportResult>{
         let find = "reportes?";
         if(bodydata.cliente){
             find = find + "cliente=" + bodydata.cliente + "&";
@@ -180,11 +168,18 @@ export class ReportsService {
             find = find + "tipo=" + bodydata.tipo + "&";
         }
         if(bodydata.formato){
-            find = find + "formato=" + bodydata.formato;
+            find = find + "formato=" + bodydata.formato + "&";
+        }
+        if(bodydata.longitud_pagina){
+            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
+        }
+        if(bodydata.numero_pagina){
+            find = find + "numero_pagina=" + bodydata.numero_pagina;
         }
 
-        console.log(this.url+ find);
-        return this._http.get<ProductsResult[]>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
+        
+        //console.log(this.url+ find);
+        return this._http.get<ProductReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
     }
 
     /**************************************************************************************************************/

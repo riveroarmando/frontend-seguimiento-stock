@@ -31,16 +31,30 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonModule } from '@angular/material/button'
 import {provideNativeDateAdapter} from '@angular/material/core';
 
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
 
+const MATERIAL_MODULES = [
+  MatDatepickerModule, 
+  MatSelectModule, 
+  MatTableModule, 
+  MatFormFieldModule, 
+  MatIconModule, 
+  MatInputModule, 
+  MatSortModule, 
+  MatPaginatorModule, 
+  MatProgressSpinnerModule,
+  MatButtonModule
+];
+
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MATERIAL_MODULES],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',
   providers: [UserService, SecurityService, TaskListService, provideNativeDateAdapter()]
@@ -51,7 +65,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   public data: Tarea[] = [];
   public pageNumber: number = 0;
   public totalRecords: number = 0;
-  public pageLength: number = 25;
+  public pageLength: number = 20;
   public numberOfPages: number = 0;
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
@@ -64,8 +78,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   public selectedClient: string = "";
   public selectedProduct: string = "";
   //Fechas
-  startDate = new FormControl(new Date());
-  endDate = new FormControl(new Date());
+  startDate = new FormControl(new Date(2022,0,1));/* Creo con fecha inicial 01/01/2022 */
+  endDate = new FormControl(new Date());/* Creo con fecha final la actual */
   
   datoSeleccionado: boolean = false;
 
@@ -111,15 +125,6 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   }
 
   /*********************************TABLA*********************************************/
-
-  /*applyFilter(event: Event) {
-    //const filterValue = (event.target as HTMLInputElement).value;
-    //this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    //if (this.dataSource.paginator) {
-    //  this.dataSource.paginator.firstPage();
-    //}
-  }*/
 
   loadClients() {
     this._taskListService.getClients()
@@ -221,8 +226,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
 
   findTasks() {
 
-    console.log(this.startDate.value?.toISOString());
-    console.log(this.endDate.value?.toISOString());
+    //console.log(this.startDate.value?.toISOString());
+    //console.log(this.endDate.value?.toISOString());
     
     let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
     let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";

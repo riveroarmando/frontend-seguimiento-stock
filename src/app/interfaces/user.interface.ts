@@ -14,7 +14,7 @@ export interface UserInterface {
   estado:            boolean;
   imagen:            string;
   email:             string;
-  rol:               Rol;
+  rol:               string;
 }
 
 export interface Rol {

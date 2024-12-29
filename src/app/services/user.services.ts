@@ -50,13 +50,14 @@ export class UserService {
         return this._http.post(this.url + 'auth/login', parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
-    /**************************************************************************************************************/
+   
     newUser(userData: UserInterface): Observable<UserResponse> {
         let parametros = JSON.stringify(userData);
         
         return this._http.post<UserResponse>(this.url + 'usuarios', parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
+     /**************************************************************************************************************/
 
     updateColaborador(proyecto: any): Observable<any> {
         let params = JSON.stringify(proyecto);
@@ -77,9 +78,9 @@ export class UserService {
     
 
     
-    getColaboradores(): Observable<any>{
+    getUsers(): Observable<UserResponse[]>{
     
-        return this._http.get(this.url+'colaboradores', {headers: this.agregarAuthorizationHeader()});
+        return this._http.get<UserResponse[]>(this.url+'usuarios', {headers: this.agregarAuthorizationHeader()});
     }
 
     /*

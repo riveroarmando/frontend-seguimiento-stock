@@ -89,7 +89,7 @@ export class TaskListService {
             find = find + "numero_pagina=" + bodydata.numero_pagina;
         }
 
-        console.log(this.url+ find);
+        //console.log(this.url+ find);
         return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
     }
 

@@ -1,78 +1,75 @@
 .container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  width: 100ih;
+  height: calc(100vh - 115px);
+  margin: 0px auto;
+  overflow:hidden;
+  flex-direction: column;
+  text-align: center;
+  border: 3px solid rgb(209, 101, 101);
+  border-radius: 20px;
+  --mat-sort-arrow-color: white;
+}
+
+.table {
+  width: 100%;
+}
+
+.spinner-container{
+  display: flex;
+  justify-content: center;
+}
+
+.form-container{
+  margin-top: 10px;
+}
+
+.form-container mat-form-field + mat-form-field {
+  margin-left: 10px;
+}
+
+.form-container mat-form-field + button {
+  margin-left: 10px;
+}
+
+.table-estilos {
+  margin-top: 20px;
+
+  th {
+      background-color: rgb(209, 101, 101);
+      color: white;
   }
-  
-  .table {
-    width: 85%;
+
+  tr {
+      height: 30px;
   }
-  
-  .spinner-container{
-    display: flex;
-    justify-content: center;
-  }
-  
-  .table-estilos{
-    margin-top: 20px;
-    th{
-      background-color:aquamarine;
-    }
-    tr{
-      height: 25px;
-    }
-    tr:hover{
+
+  tr:hover {
       background: whitesmoke;
       cursor: pointer;
-    }
   }
-  
-  .mat-column-cliente{
-    width: 8%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-  }
-  
-  .mat-column-producto{
-    width: 8%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-  }
-  
-  .mat-column-nombre_tarea{
-    width: 50%;
-    max-width: 600px;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: left;
-  }
-  
-  .mat-column-cantidad{
-    width: 10%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-  }
-  
-  .mat-column-unidad{
-    width: 8%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-  }
-  
-  .mat-column-fecha{
-    width: 16%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-  }
-  
-  
+}
+
+.mat-column-cliente{
+  width: 8%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-imagenes{
+  width: 10%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-hojas{
+  width: 8%;
+  max-width: 10%;
+  border-right: 1px solid black;
+  padding-right: 24px;
+  text-align: center;
+}

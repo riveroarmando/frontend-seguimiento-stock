@@ -23,6 +23,9 @@ import { Client } from '../interfaces/client.interfaces';
 import { Product } from '../interfaces/product.interface';
 import { ProductsResult } from '../interfaces/product.interface';
 import { ProductsSearch } from '../interfaces/product.interface';
+import { ReportSearch } from '../interfaces/report.interface';
+import { ClientReportResult } from '../interfaces/report.interface';
+import { ResultadoPorCliente } from '../interfaces/report.interface';
 
 
 /*Angular Material */
@@ -35,27 +38,40 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonModule } from '@angular/material/button'
+
 import {provideNativeDateAdapter} from '@angular/material/core';
-
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
-
 import { catchError, finalize, tap, throwError } from 'rxjs';
+
+const MATERIAL_MODULES = [
+  MatDatepickerModule, 
+  MatSelectModule, 
+  MatTableModule, 
+  MatFormFieldModule, 
+  MatIconModule, 
+  MatInputModule, 
+  MatSortModule, 
+  MatPaginatorModule, 
+  MatProgressSpinnerModule,
+  MatButtonModule
+];
 
 @Component({
   selector: 'app-reports-by-clients',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MATERIAL_MODULES],
   templateUrl: './reports-by-clients.component.html',
   styleUrl: './reports-by-clients.component.scss',
   providers: [UserService, SecurityService, provideNativeDateAdapter()]
 })
 export class ReportsByClientsComponent implements OnInit, AfterViewInit {
-  public displayedColumns: string[] = ['cliente', 'producto', 'imagenes', 'hojas'];
+  public displayedColumns: string[] = ['cliente', 'imagenes', 'hojas'];
   public url: string;
-  public data: ProductsResult[] = [];
+  public data: ResultadoPorCliente[] = [];
   public pageNumber: number = 0;
   public totalRecords: any = 0;
-  public pageLength: number = 25;
+  public pageLength: number = 20;
   public numberOfPages: number = 0;
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
@@ -68,8 +84,8 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   public selectedClient: string = "";
   public selectedProduct: string = "";
   //Fechas
-  startDate = new FormControl(new Date());
-  endDate = new FormControl(new Date());
+  startDate = new FormControl(new Date(2022,0,1));/* Creo con fecha inicial 01/01/2022 */
+  endDate = new FormControl(new Date());/* Creo con fecha final la actual */
   
   datoSeleccionado: boolean = false;
 
@@ -82,11 +98,6 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
       Validators.required,
       Validators.minLength(4),
       Validators.maxLength(20)
-    ]],
-    productoSeleccionado: ['', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(30)
     ]]
   });
 
@@ -106,10 +117,6 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
     return this.formFilter.controls['clienteSeleccionado'];
   }
 
-  get productoSeleccionado() {
-    return this.formFilter.controls['productoSeleccionado'];
-  }
-
   ngOnInit(): void {
     this.loadClients();
   }
@@ -121,7 +128,6 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(data => {
           this.clientes = data;
-
           this.selectedClient = 'Todos';
           this.selectedProduct = 'Todos';
         }),
@@ -136,39 +142,6 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  loadReportByProducts() {
-
-    this.isLoadingResults = true;
-
-    let bodydata: ProductsSearch = {
-      cliente: "",
-      fecha_fin: "",
-      fecha_inicio: "",
-      producto: "",
-      tipo: "",
-      formato: ""
-    };
-
-    this._reportsService.getReportsList(bodydata)
-      .pipe(
-        tap(data => {
-          this.data = data;
-          //this.pageNumber = data.numero_pagina;
-          //this.totalRecords = data.total_registros;
-          //this.pageLength = data.longitud_pagina;
-          //this.numberOfPages = data.cantidad_paginas;
-        }),
-        catchError(err => {
-          console.log("Error cargando los datos de Reportes ", err);
-          this._securityService.logout();
-          this._router.navigateByUrl("/");
-          return throwError(err);
-        }),
-        finalize(() => this.isLoadingResults = false)
-      )
-      .subscribe();
-  };
-
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -178,25 +151,27 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          let bodydata: ProductsSearch = {
+          let bodydata: ReportSearch = {
             cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
             fecha_fin: "",
             fecha_inicio: "",
-            producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
-            tipo: "producto",
-            formato: "json"
+            producto: "",
+            tipo: "cliente",
+            formato: "json",
+            longitud_pagina: this.paginator?.pageSize,
+            numero_pagina: this.paginator?.pageIndex + 1,
           };
+  
           return this._reportsService.getReportsList(bodydata)
             .pipe(
               catchError(() => observableOf(null))
             );
         }),
         map(data => {
-          this.pageNumber = this.paginator.pageIndex;
-          this.totalRecords = data?.length;
-          //this.pageLength = this.paginator?.pageSize;
-          this.pageLength = 25;
-          //this.numberOfPages = data?.cantidad_paginas ?? 0;
+          this.pageNumber = data?.numero_pagina ?? 1;
+          this.totalRecords = data?.total_registros ?? 0;
+          this.pageLength = this.paginator?.pageSize;
+          this.numberOfPages = data?.cantidad_paginas ?? 0;
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = data === null;
@@ -208,15 +183,15 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
           // Only refresh the result length if there is new data. In case of rate
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
-          this.resultsLength = data.length;
-          console.log(data.length);
-          return data;
+          this.resultsLength = data.total_registros;
+          //console.log(data.length);
+          return data.resultadoPorCliente;
         }),
       )
       .subscribe(data => (this.data = data));
   }
 
-  findTasks() {
+  findClients() {
 
     console.log(this.startDate.value?.toISOString());
     console.log(this.endDate.value?.toISOString());
@@ -226,27 +201,29 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
 
     this.isLoadingResults = true;
 
-    let bodydata: ProductsSearch = {
+    let bodydata: ReportSearch = {
       cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
       fecha_fin: eDate,
       fecha_inicio: sDate,
-      producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
-      tipo: "",
-      formato: ""
+      producto: "",
+      tipo: "cliente",
+      formato: "json",
+      longitud_pagina: this.paginator?.pageSize ?? 10,
+      numero_pagina: 1
     };
-
+    
     this._reportsService.getReportsListFilter(bodydata)
       .pipe(
         tap(data => {
-          this.data = data;
-          //this.pageNumber = data.numero_pagina;
-          //this.totalRecords = data.total_registros;
+          this.data = data.resultadoPorCliente;
+          this.pageNumber = data.numero_pagina;
+          this.totalRecords = data.total_registros;
           this.pageLength = this.paginator?.pageSize;
-          //this.numberOfPages = data.cantidad_paginas;
+          this.numberOfPages = data.cantidad_paginas;
         }),
         catchError(err => {
-          console.log("Error cargando los datos de Tareas ", err);
-          alert("Error cargando los datos de Tareas ");
+          console.log("Error cargando los datos de Reportes por Cliente ", err);
+          alert("Error cargando los datos de Reportes por Cliente ");
           return throwError(err);
         }),
         finalize(() => this.isLoadingResults = false)
