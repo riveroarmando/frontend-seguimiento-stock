@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon'
 
 /* Componente customizado */
 import { MenuItemComponent } from "../menu-item/menu-item.component";
-import { SecurityService } from '../../services/security.services';
+import { SecurityService } from '../../services/security.service';
 import { User } from '../../models/user';
 import { Global } from '../../services/global';
 

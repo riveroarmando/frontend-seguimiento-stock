@@ -7,9 +7,8 @@ import { map, startWith, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
 
-import { SecurityService } from '../services/security.services';
-import { UserService } from '../services/user.services';
-import { ReportsService } from '../services/reports.services.';
+import { SecurityService } from '../services/security.service';
+import { UserService } from '../services/user.service';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../services/global';
@@ -39,8 +38,6 @@ import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl,
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
 
-import { ReportsByProductsComponent } from "../reports-by-products/reports-by-products.component";
-import { ReportsByClientsComponent } from "../reports-by-clients/reports-by-clients.component";
 
 @Component({
   selector: 'app-reports',
@@ -48,7 +45,7 @@ import { ReportsByClientsComponent } from "../reports-by-clients/reports-by-clie
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HttpClientModule, MatTabsModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss',
-  providers: [UserService, SecurityService, ReportsService, provideNativeDateAdapter()]
+  providers: [UserService, SecurityService, provideNativeDateAdapter()]
 })
 export class ReportsComponent {
 

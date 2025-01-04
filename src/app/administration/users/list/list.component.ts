@@ -5,9 +5,9 @@ import { merge, Observable, of as observableOf } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
-import { SecurityService } from '../../../services/security.services';
-import { UserService } from '../../../services/user.services';
-import { ReportsService } from '../../../services/reports.services.';
+import { SecurityService } from '../../../services/security.service';
+import { UserService } from '../../../services/user.service';
+import { ReportsService } from '../../../services/reports.service';
 import { User } from '../../../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../../../services/global';
@@ -39,7 +39,6 @@ import {provideNativeDateAdapter} from '@angular/material/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
-import { TaskListService } from '../../../services/task-list.services.';
 import { UserResponse } from '../../../interfaces/user.interface';
 
 const MATERIAL_MODULES = [MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule];
@@ -51,7 +50,7 @@ const MATERIAL_MODULES = [MatDatepickerModule, MatSelectModule, MatTableModule, 
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MATERIAL_MODULES],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
-  providers: [UserService, TaskListService, SecurityService, ReportsService, provideNativeDateAdapter()]
+  providers: [UserService, SecurityService, ReportsService, provideNativeDateAdapter()]
 })
 export class ListComponent implements OnInit, AfterViewInit {
 public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_creacion', 'estado', 'imagen', 'email', 'rol'];
@@ -97,7 +96,6 @@ public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_crea
   constructor(
     private _userService: UserService,
     private _securityService: SecurityService,
-    private _taskListService: TaskListService,
     private _router: Router,
     private _formBuilder: FormBuilder
   ) {

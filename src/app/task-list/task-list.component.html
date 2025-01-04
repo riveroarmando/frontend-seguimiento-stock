@@ -7,7 +7,7 @@
             }
             @if (isRateLimitReached) {
             <div class="spinner-container">
-                GitHub's API rate limit has been reached. It will be reset in one minute.
+                Se alcanzó el límite de velocidad de la API. Se restablecerá en un minuto.
             </div>
             }
         </div>
@@ -16,7 +16,7 @@
 
         <div class="">
 
-            <form class="form-container" [formGroup]="formFilter">
+            <form class="form-flex-container" [formGroup]="formFilter">
                 <mat-form-field appearance="outline" floatLabel="auto">
                     <mat-label>Cliente</mat-label>
                     <mat-select formControlName="clienteSeleccionado" #clienteSeleccionado name="cliente"
@@ -42,7 +42,8 @@
 
                 <mat-form-field appearance="outline" floatLabel="auto">
                     <mat-label>Fecha Inicio</mat-label>
-                    <input matInput [matDatepicker]="picker1" [formControl]="startDate" (dateChange)="verifyStartDate()">
+                    <input matInput [matDatepicker]="picker1" [formControl]="startDate"
+                        (dateChange)="verifyStartDate()">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
@@ -56,10 +57,23 @@
                     <mat-datepicker #picker2></mat-datepicker>
                 </mat-form-field>
 
-                <button mat-fab extended color="primary" (click)="findTasks()" [disabled]="formFilter.invalid">
-                    <mat-icon>input</mat-icon>
-                    Buscar
-                </button>
+                <div class="button-row">
+                    <div class="form-flex-container">
+                        <div class="button-container">
+                            <button mat-fab extended color="primary" (click)="findTasks()" [disabled]="formFilter.invalid">
+                                <mat-icon>input</mat-icon>
+                                Buscar
+                            </button>
+                        </div>
+                        <div class="button-container">
+                            <button mat-fab color="accent" (click)="downloadFile()" [disabled]="isDownloadFileDisabled">
+                                <mat-icon>cloud_download</mat-icon>
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+
             </form>
 
         </div>
@@ -109,8 +123,8 @@
 
             </table>
 
-            <mat-paginator class="" [length]="totalRecords" [pageSize]="pageLength"
-                [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of users"></mat-paginator>
+            <mat-paginator class="" [length]="totalRecords" [pageSize]="pageLength" [pageSizeOptions]="[5, 10, 20]"
+                aria-label="Select page of users"></mat-paginator>
         </div>
 
 

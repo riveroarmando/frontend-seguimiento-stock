@@ -6,9 +6,10 @@ import { map, startWith, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
 
-import { SecurityService } from '../services/security.services';
-import { UserService } from '../services/user.services';
-import { TaskListService } from '../services/task-list.services.';
+import { SecurityService } from '../services/security.service';
+import { UserService } from '../services/user.service';
+import { TaskListService } from '../services/task-list.service';
+import { FileManagerService } from '../services/file-manager.service';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../services/global';
@@ -57,7 +58,7 @@ const MATERIAL_MODULES = [
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MATERIAL_MODULES],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',
-  providers: [UserService, SecurityService, TaskListService, provideNativeDateAdapter()]
+  providers: [UserService, SecurityService, TaskListService, FileManagerService, provideNativeDateAdapter()]
 })
 export class TaskListComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = ['cliente', 'producto', 'nombre_tarea', 'cantidad', 'unidad', 'fecha_creacion'];
@@ -70,6 +71,7 @@ export class TaskListComponent implements OnInit, AfterViewInit {
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
   public isRateLimitReached = false;
+  public isDownloadFileDisabled: boolean=true;
 
   //String que levantan las listas de los menu desplegables
   public clientes: Client[] = [];
@@ -106,7 +108,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
     private _securityService: SecurityService,
     private _taskListService: TaskListService,
     private _router: Router,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private _fileManagerService: FileManagerService
   ) {
     this.url = Global.url;
   }
@@ -156,7 +159,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
       fecha_inicio: "",
       producto: "",
       longitud_pagina: this.paginator?.pageSize ?? 25,
-      numero_pagina: this.paginator?.pageIndex ?? 1
+      numero_pagina: this.paginator?.pageIndex ?? 1,
+      formato: "json"
     };
 
     this._taskListService.getTasksList(bodydata)
@@ -194,7 +198,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
             fecha_inicio: "",
             producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
             longitud_pagina: this.paginator?.pageSize,
-            numero_pagina: this.paginator?.pageIndex + 1
+            numero_pagina: this.paginator?.pageIndex + 1,
+            formato: "json"
           };
           return this._taskListService.getTasksList(bodydata)
             .pipe(
@@ -226,12 +231,10 @@ export class TaskListComponent implements OnInit, AfterViewInit {
 
   findTasks() {
 
-    //console.log(this.startDate.value?.toISOString());
-    //console.log(this.endDate.value?.toISOString());
-    
     let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
     let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";
 
+    this.isDownloadFileDisabled=false;
     this.isLoadingResults = true;
 
     let bodydata: TaskSearch = {
@@ -240,7 +243,8 @@ export class TaskListComponent implements OnInit, AfterViewInit {
       fecha_inicio: sDate,
       producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
       longitud_pagina: this.paginator?.pageSize ?? 25,
-      numero_pagina: 1
+      numero_pagina: 1,
+      formato: "json"
     };
 
     this._taskListService.getTasksListFilter(bodydata)
@@ -301,11 +305,47 @@ export class TaskListComponent implements OnInit, AfterViewInit {
       this.endDate.setValue(this.startDate.value);
     }
   }
-  
+
+  downloadFile(){
+
+    this.isLoadingResults = true;
+    let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
+    let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";
+
+    let bodydata: TaskSearch = {
+      cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
+      fecha_fin: eDate,
+      fecha_inicio: sDate,
+      producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
+      longitud_pagina: 100000,
+      numero_pagina: 1,
+      formato: "csv"
+    };
+
+    const fileName = `Reporte_${bodydata.cliente}_${bodydata.producto}_${bodydata.fecha_inicio}_${bodydata.fecha_fin}.csv`
+
+    this._fileManagerService.downloadFileTasksListFilter(bodydata)
+      .subscribe(response=>{
+        this.manageFile(response, fileName);
+        this.isLoadingResults = false;
+        this.isDownloadFileDisabled=true;
+      });
+
+      
+  }
+
+  manageFile(response: any, fileName: string): void{
+    const dataType = response.type;
+    const binaryData = [];
+    binaryData.push(response);
+
+    const filePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
 
 }
-
-
-
-/*****************************FIN TABLA*********************************************/
 

@@ -7,25 +7,26 @@ import { map, startWith, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
 
-import { SecurityService } from '../services/security.services';
-import { UserService } from '../services/user.services';
-import { ReportsService } from '../services/reports.services.';
-import { User } from '../models/user';
+import { SecurityService } from '../../services/security.service';
+import { UserService } from '../../services/user.service';
+import { ReportsService } from '../../services/reports.service';
+import {FileManagerService} from '../../services/file-manager.service'
+import { User } from '../../models/user';
 import { Router } from '@angular/router';
-import { Global } from '../services/global';
+import { Global } from '../../services/global';
 import { RouterModule } from '@angular/router';
 /*Para que funcione httpclient */
 import { HttpClientModule } from '@angular/common/http';
 
-import { TaskSearch } from '../interfaces/task-search.interfaces';
-import { Tarea } from '../interfaces/tareas.interfaces';
-import { Client } from '../interfaces/client.interfaces';
-import { Product } from '../interfaces/product.interface';
-import { ProductsResult } from '../interfaces/product.interface';
-import { ProductsSearch } from '../interfaces/product.interface';
-import { ReportSearch } from '../interfaces/report.interface';
-import { ClientReportResult } from '../interfaces/report.interface';
-import { ResultadoPorCliente } from '../interfaces/report.interface';
+import { TaskSearch } from '../../interfaces/task-search.interfaces';
+import { Tarea } from '../../interfaces/tareas.interfaces';
+import { Client } from '../../interfaces/client.interfaces';
+import { Product } from '../../interfaces/product.interface';
+import { ProductsResult } from '../../interfaces/product.interface';
+import { ProductsSearch } from '../../interfaces/product.interface';
+import { ReportSearch } from '../../interfaces/report.interface';
+import { ClientReportResult } from '../../interfaces/report.interface';
+import { ResultadoPorCliente } from '../../interfaces/report.interface';
 
 
 /*Angular Material */
@@ -63,7 +64,7 @@ const MATERIAL_MODULES = [
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, MATERIAL_MODULES],
   templateUrl: './reports-by-clients.component.html',
   styleUrl: './reports-by-clients.component.scss',
-  providers: [UserService, SecurityService, provideNativeDateAdapter()]
+  providers: [UserService, SecurityService, FileManagerService, provideNativeDateAdapter()]
 })
 export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = ['cliente', 'imagenes', 'hojas'];
@@ -76,6 +77,7 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
   public isRateLimitReached = false;
+  public isDownloadFileDisabled: boolean=true;
 
   //String que levantan las listas de los menu desplegables
   public clientes: Client[] = [];
@@ -107,7 +109,8 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
     private _securityService: SecurityService,
     private _reportsService: ReportsService,
     private _router: Router,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private _fileManagerService: FileManagerService
   ) {
     this.url = Global.url;
   }
@@ -193,13 +196,11 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
 
   findClients() {
 
-    console.log(this.startDate.value?.toISOString());
-    console.log(this.endDate.value?.toISOString());
-    
     let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
     let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";
 
     this.isLoadingResults = true;
+    this.isDownloadFileDisabled=false;
 
     let bodydata: ReportSearch = {
       cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
@@ -271,6 +272,47 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
     }
   }
   
+  downloadFile(){
+
+    this.isLoadingResults = true;
+    let sDate = this.startDate.value!==null?this.startDate.value.toISOString(): "";
+    let eDate = this.endDate.value!==null?this.endDate.value.toISOString(): "";
+
+    let bodydata: ReportSearch = {
+      cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
+      fecha_fin: eDate,
+      fecha_inicio: sDate,
+      producto: "",
+      tipo: "cliente",
+      formato: "csv",
+      longitud_pagina: 100000,
+      numero_pagina: 1
+    };
+
+    const fileName = `ReportexCliente_${bodydata.cliente}_${bodydata.fecha_inicio}_${bodydata.fecha_fin}.csv`
+
+    this._fileManagerService.downloadReportsListFilterClient(bodydata)
+      .subscribe(response=>{
+        this.manageFile(response, fileName);
+        this.isLoadingResults = false;
+        this.isDownloadFileDisabled=true;
+      });
+
+      
+  }
+
+  manageFile(response: any, fileName: string): void{
+    const dataType = response.type;
+    const binaryData = [];
+    binaryData.push(response);
+
+    const filePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
 
 }
 

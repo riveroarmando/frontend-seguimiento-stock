@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RouterLinkActive } from '@angular/router';
 
-import { SecurityService } from '../services/security.services';
+import { SecurityService } from '../services/security.service';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../services/global';

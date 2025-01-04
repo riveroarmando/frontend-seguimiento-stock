@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { User } from "../models/user";
 import { Global } from "./global";
 import { Router } from '@angular/router';
-import { SecurityService } from "./security.services";
+import { SecurityService } from "./security.service";
 import { TaskResult } from "../interfaces/tareas.interfaces";
 import { TaskSearch } from "../interfaces/task-search.interfaces";
 import { Client } from "../interfaces/client.interfaces";
@@ -14,7 +14,9 @@ import { ReportSearch } from "../interfaces/report.interface";
 import { ClientReportResult } from "../interfaces/report.interface";
 import { ProductReportResult } from "../interfaces/report.interface";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class ReportsService {
     public url: string;
     private _usuario!: User;

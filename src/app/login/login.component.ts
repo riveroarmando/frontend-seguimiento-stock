@@ -1,7 +1,7 @@
 import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../services/user.services';
-import { SecurityService } from '../services/security.services';
+import { UserService } from '../services/user.service';
+import { SecurityService } from '../services/security.service';
 import { Global } from '../services/global';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';

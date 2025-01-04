@@ -4,7 +4,9 @@ import { User } from "../models/user";
 import { Global } from "./global";
 import { Router } from '@angular/router';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class SecurityService {
     public url: string;
     private _usuario!: User;

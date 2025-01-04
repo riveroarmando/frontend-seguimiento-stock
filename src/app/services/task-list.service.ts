@@ -4,13 +4,15 @@ import { Observable, throwError } from 'rxjs';
 import { User } from "../models/user";
 import { Global } from "./global";
 import { Router } from '@angular/router';
-import { SecurityService } from "./security.services";
+import { SecurityService } from "./security.service";
 import { TaskResult } from "../interfaces/tareas.interfaces";
 import { TaskSearch } from "../interfaces/task-search.interfaces";
 import { Client } from "../interfaces/client.interfaces";
 import { Product } from "../interfaces/product.interface";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class TaskListService {
     public url: string;
     private _usuario!: User;

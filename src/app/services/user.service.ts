@@ -6,9 +6,11 @@ import { UserInterface } from "../interfaces/user.interface";
 import { UserResponse } from "../interfaces/user.interface";
 import { Global } from "./global";
 import { Router } from '@angular/router';
-import { SecurityService } from "./security.services";
+import { SecurityService } from "./security.service";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class UserService {
     public url: string;
     private _usuario!: User;

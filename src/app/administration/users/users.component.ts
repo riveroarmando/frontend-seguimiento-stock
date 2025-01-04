@@ -13,8 +13,8 @@ import { DeleteComponent } from './delete/delete.component';
 /* Datos */
 import { UserInterface } from '../../interfaces/user.interface';
 import { UserResponse } from '../../interfaces/user.interface';
-import { UserService } from '../../services/user.services';
-import { SecurityService } from '../../services/security.services';
+import { UserService } from '../../services/user.service';
+import { SecurityService } from '../../services/security.service';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 

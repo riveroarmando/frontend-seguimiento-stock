@@ -5,4 +5,5 @@ export interface TaskSearch {
     fecha_fin:        string;
     longitud_pagina:  number;
     numero_pagina:    number;
+    formato:          string;
 }

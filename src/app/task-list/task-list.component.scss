@@ -20,18 +20,34 @@
   justify-content: center;
 }
 
-.form-container{
+.form-flex-container mat-form-field + mat-form-field {
+  margin-left: 20px;
+}
+
+/*********************************************/
+.button-row {
+  display: table-cell;
+  max-width: 600px;
+  margin-left: 20px;
+}
+
+.button-row .mat-mdc-button-base {
+  margin: 0px 0px 0px 0;
+}
+
+.form-flex-container {
+  display: flex;
+  justify-content:center;
+  flex-wrap: wrap;
   margin-top: 10px;
 }
 
-.form-container mat-form-field + mat-form-field {
-  margin-left: 10px;
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 120px;
 }
-
-.form-container mat-form-field + button {
-  margin-left: 10px;
-}
-
+/*********************************************/
 .table-estilos {
   margin-top: 20px;
 

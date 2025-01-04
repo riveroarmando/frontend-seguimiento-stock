@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../../../services/user.services';
-import { SecurityService } from '../../../services/security.services';
+import { UserService } from '../../../services/user.service';
+import { SecurityService } from '../../../services/security.service';
 import { Router } from '@angular/router';
 import { UserInterface } from '../../../interfaces/user.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

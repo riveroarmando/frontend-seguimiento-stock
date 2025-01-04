@@ -5,9 +5,9 @@ import { merge, Observable, of as observableOf } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 
-import { SecurityService } from '../../../services/security.services';
-import { UserService } from '../../../services/user.services';
-import { ReportsService } from '../../../services/reports.services.';
+import { SecurityService } from '../../../services/security.service';
+import { UserService } from '../../../services/user.service';
+import { ReportsService } from '../../../services/reports.service';
 import { User } from '../../../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../../../services/global';
@@ -40,7 +40,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
-import { TaskListService } from '../../../services/task-list.services.';
+import { TaskListService } from '../../../services/task-list.service';
 import { UserInterface } from '../../../interfaces/user.interface';
 import { UserResponse } from '../../../interfaces/user.interface';
 
@@ -188,14 +188,6 @@ export class EditComponent implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          let bodydata: TaskSearch = {
-            cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
-            fecha_fin: "",
-            fecha_inicio: "",
-            producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
-            longitud_pagina: this.paginator?.pageSize,
-            numero_pagina: this.paginator?.pageIndex + 1
-          };
           return this._userService.getUsers()
             .pipe(
               catchError(() => observableOf(null))
@@ -233,15 +225,6 @@ export class EditComponent implements OnInit, AfterViewInit {
     let eDate = this.endDate.value !== null ? this.endDate.value.toISOString() : "";
 
     this.isLoadingResults = true;
-
-    let bodydata: TaskSearch = {
-      cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
-      fecha_fin: eDate,
-      fecha_inicio: sDate,
-      producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
-      longitud_pagina: this.paginator?.pageSize ?? 25,
-      numero_pagina: 1
-    };
 
     this._userService.getUsers()
       .pipe(

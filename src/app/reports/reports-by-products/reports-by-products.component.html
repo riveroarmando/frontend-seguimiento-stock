@@ -7,7 +7,7 @@
             }
             @if (isRateLimitReached) {
             <div class="spinner-container">
-                GitHub's API rate limit has been reached. It will be reset in one minute.
+                Se alcanzó el límite de velocidad de la API. Se restablecerá en un minuto.
             </div>
             }
         </div>
@@ -16,7 +16,7 @@
 
         <div class="">
 
-            <form class="form-container" [formGroup]="formFilter">
+            <form class="form-flex-container" [formGroup]="formFilter">
                 <mat-form-field appearance="outline" floatLabel="auto">
                     <mat-label>Cliente</mat-label>
                     <mat-select formControlName="clienteSeleccionado" #clienteSeleccionado name="cliente"
@@ -57,10 +57,22 @@
                     <mat-datepicker #picker2></mat-datepicker>
                 </mat-form-field>
 
-                <button mat-fab extended color="primary" (click)="findClients()" [disabled]="formFilter.invalid">
-                    <mat-icon>input</mat-icon>
-                    Buscar
-                </button>
+                <div class="button-row">
+                    <div class="form-flex-container">
+                        <div class="button-container">
+                            <button mat-fab extended color="primary" (click)="findClients()" [disabled]="formFilter.invalid">
+                                <mat-icon>input</mat-icon>
+                                Buscar
+                            </button>
+                        </div>
+                        <div class="button-container">
+                            <button mat-fab color="accent" (click)="downloadFile()" [disabled]="isDownloadFileDisabled">
+                                <mat-icon>cloud_download</mat-icon>
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
             </form>
 
         </div>
