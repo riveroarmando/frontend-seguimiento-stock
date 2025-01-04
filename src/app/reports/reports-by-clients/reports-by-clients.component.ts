@@ -18,10 +18,10 @@ import { RouterModule } from '@angular/router';
 /*Para que funcione httpclient */
 import { HttpClientModule } from '@angular/common/http';
 
-import { TaskSearch } from '../../interfaces/task-search.interfaces';
-import { Tarea } from '../../interfaces/tareas.interfaces';
-import { Client } from '../../interfaces/client.interfaces';
-import { Product } from '../../interfaces/product.interface';
+import { TaskSearch } from '../../interfaces/task-search.interface';
+import { Tarea } from '../../interfaces/tareas.interface';
+import { Client, Cliente } from '../../interfaces/client.interface';
+import { Product, Producto } from '../../interfaces/product.interface';
 import { ProductsResult } from '../../interfaces/product.interface';
 import { ProductsSearch } from '../../interfaces/product.interface';
 import { ReportSearch } from '../../interfaces/report.interface';
@@ -80,8 +80,8 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   public isDownloadFileDisabled: boolean=true;
 
   //String que levantan las listas de los menu desplegables
-  public clientes: Client[] = [];
-  public productos: Product[] = [];
+  public clientes: Cliente[] = [];
+  public productos: Producto[] = [];
   //Variables para seleccionar listas
   public selectedClient: string = "";
   public selectedProduct: string = "";
@@ -130,7 +130,7 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
     this._reportsService.getClients()
       .pipe(
         tap(data => {
-          this.clientes = data;
+          this.clientes = data.clientes;
           this.selectedClient = 'Todos';
           this.selectedProduct = 'Todos';
         }),
@@ -236,7 +236,7 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
     this._reportsService.getProducts(this.selectedClient)
       .pipe(
         tap(product => {
-          this.productos = product;
+          this.productos = product.productos;
           this.selectedProduct = 'Todos';
         }),
         catchError(err => {

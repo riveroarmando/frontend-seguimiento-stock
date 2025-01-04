@@ -15,10 +15,10 @@ import { RouterModule } from '@angular/router';
 /*Para que funcione httpclient */
 import { HttpClientModule } from '@angular/common/http';
 
-import { TaskSearch } from '../../../interfaces/task-search.interfaces';
-import { Tarea } from '../../../interfaces/tareas.interfaces';
-import { Client } from '../../../interfaces/client.interfaces';
-import { ClientResult } from '../../../interfaces/client.interfaces';
+import { TaskSearch } from '../../../interfaces/task-search.interface';
+import { Tarea } from '../../../interfaces/tareas.interface';
+import { Client } from '../../../interfaces/client.interface';
+import { ClientResult } from '../../../interfaces/client.interface';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductsResult } from '../../../interfaces/product.interface';
 import { ProductsSearch } from '../../../interfaces/product.interface';

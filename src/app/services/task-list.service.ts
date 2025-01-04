@@ -5,10 +5,11 @@ import { User } from "../models/user";
 import { Global } from "./global";
 import { Router } from '@angular/router';
 import { SecurityService } from "./security.service";
-import { TaskResult } from "../interfaces/tareas.interfaces";
-import { TaskSearch } from "../interfaces/task-search.interfaces";
-import { Client } from "../interfaces/client.interfaces";
+import { TaskResult } from "../interfaces/tareas.interface";
+import { TaskSearch } from "../interfaces/task-search.interface";
+import { Client } from "../interfaces/client.interface";
 import { Product } from "../interfaces/product.interface";
+import { Cliente } from "../interfaces/client.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -95,16 +96,16 @@ export class TaskListService {
         return this._http.get<TaskResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
     }
 
-    getClients(): Observable<Client[]>{
+    getClients(): Observable<Client>{
 
-        return this._http.get<Client[]>(this.url+ 'clientes', {headers: this.agregarAuthorizationHeader()});
+        return this._http.get<Client>(this.url+ 'clientes', {headers: this.agregarAuthorizationHeader()});
 
     }
 
-    getProducts(cliente: string): Observable<Product[]>{
+    getProducts(cliente: string): Observable<Product>{
 
         //return this._http.get<Product[]>(this.url+ 'productos', {headers: this.agregarAuthorizationHeader()});
-        return this._http.get<Product[]>(this.url+ "productos", {
+        return this._http.get<Product>(this.url+ "productos", {
             params: new HttpParams()
             .set('cliente', cliente),
             headers: this.agregarAuthorizationHeader()

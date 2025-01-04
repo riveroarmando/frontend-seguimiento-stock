@@ -5,7 +5,7 @@ import { Global } from "./global";
 import { Router } from '@angular/router';
 import { SecurityService } from "./security.service";
 import { User } from "../models/user";
-import { TaskSearch } from '../interfaces/task-search.interfaces';
+import { TaskSearch } from '../interfaces/task-search.interface';
 import { ReportSearch } from '../interfaces/report.interface';
 
 @Injectable({
