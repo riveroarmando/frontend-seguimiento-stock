@@ -8,6 +8,7 @@ import { DatePipe } from '@angular/common';
 import { SecurityService } from '../../../services/security.service';
 import { UserService } from '../../../services/user.service';
 import { ReportsService } from '../../../services/reports.service';
+import { VariablesService } from '../../../services/variables.service';
 import { User } from '../../../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../../../services/global';
@@ -22,6 +23,9 @@ import { ClientResult } from '../../../interfaces/client.interface';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductsResult } from '../../../interfaces/product.interface';
 import { ProductsSearch } from '../../../interfaces/product.interface';
+import { UserInterface } from '../../../interfaces/user.interface';
+import { Rol } from '../../../interfaces/variables.interface';
+import { UserResponse, Usuario, UserSearch, UserUpdateResponse, UserUpdateInterface } from '../../../interfaces/user.interface';
 
 
 /*Angular Material */
@@ -35,16 +39,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button'
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox'
 
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
 import { TaskListService } from '../../../services/task-list.service';
-import { UserInterface } from '../../../interfaces/user.interface';
-import { UserResponse } from '../../../interfaces/user.interface';
 
-const MATERIAL_MODULES = [MatButtonModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule];
+
+const MATERIAL_MODULES = [MatCheckboxModule, MatSlideToggleModule, MatButtonModule, MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule];
 
 
 @Component({
@@ -59,7 +64,7 @@ export class EditComponent implements OnInit, AfterViewInit {
 
   public displayedColumns: string[] = ['nombre_y_apellido', 'usuario'];
   public url: string;
-  public data: UserResponse[] = [];
+  public data: Usuario[] = [];
   public pageNumber: number = 0;
   public totalRecords: number = 0;
   public pageLength: number = 17;
@@ -67,44 +72,47 @@ export class EditComponent implements OnInit, AfterViewInit {
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
   public isRateLimitReached = false;
+  public isChecked: boolean = true;
 
-  //String que levantan las listas de los menu desplegables
-  public clientes: Client[] = [];
-  public productos: Product[] = [];
   //Variables para seleccionar listas
-  public selectedClient: string = "";
-  public selectedProduct: string = "";
+  public selectedRol: string = "";
+  public selectedImagen: string = "";
+  public selectedTermino: string = "";
+  
+  //String que levantan las listas de los menu desplegables
+  public roles: Rol[] = [];
+  public avatares: string[] = [];
+
   //Fechas
   startDate = new FormControl(new Date());
   endDate = new FormControl(new Date());
 
   datoSeleccionado: boolean = false;
 
+  //Form
+  public isCheckedPassword: boolean = false;
+  public isformEditUserActive: boolean = true;
+  public isAvailable: boolean = false;
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
 
   formFilter = this._formBuilder.group({
-    nombre_y_apellido: ['', [
-      Validators.required,
-      Validators.minLength(4),
-      Validators.maxLength(20)
-    ]],
-    usuario: ['', [
-      Validators.required,
-      Validators.minLength(4),
-      Validators.maxLength(30)
+    termino: ['', [
+      Validators.minLength(1),
+      Validators.maxLength(40)
     ]]
   });
 
   formEditUser = this._formBuilder.group({
-    usuario: ['', [
+    usuario: [{ value: '', disabled: true }, [
       Validators.required,
       Validators.minLength(5),
       Validators.maxLength(30)
     ]],
-    password: ['', [
-      Validators.required,
+    changePassword: { value: '', disabled: true },
+    password: [{ value: '', disabled: true }, [
       Validators.minLength(5),
       Validators.maxLength(20)
     ]],
@@ -113,7 +121,7 @@ export class EditComponent implements OnInit, AfterViewInit {
       Validators.minLength(5),
       Validators.maxLength(20)
     ]],
-    rol: ['', [
+    rol: [{ value: '', disabled: true }, [
       Validators.required,
       Validators.minLength(5),
       Validators.maxLength(20)
@@ -136,40 +144,32 @@ export class EditComponent implements OnInit, AfterViewInit {
     private _securityService: SecurityService,
     private _taskListService: TaskListService,
     private _router: Router,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private _variablesService: VariablesService
   ) {
     this.url = Global.url;
+    this.avatares = Global.avatares;
   }
 
 
-  get nombreYApellidoSeleccionado() {
-    return this.formFilter.controls['nombre_y_apellido'];
-  }
-
-  get usuarioSeleccionado() {
-    return this.formFilter.controls['usuario'];
+  get termino() {
+    return this.formFilter.controls['termino'];
   }
 
   ngOnInit(): void {
+    this.loadRoles();
   }
 
-  /*********************************TABLA*********************************************/
-
-  loadTaskList() {
-
-    this.isLoadingResults = true;
-
-    this._userService.getUsers()
+  loadRoles() {
+    this._variablesService.getRoles()
       .pipe(
         tap(data => {
-          this.data = data;
-          this.pageNumber = 1;
-          this.totalRecords = 10;
-          this.pageLength = 10;
-          this.numberOfPages = 1;
+          this.roles = data;
+
+          this.selectedRol = 'Todos';
         }),
         catchError(err => {
-          console.log("Error cargando los datos de Tareas ", err);
+          console.log("Error cargando los Roles ", err);
           this._securityService.logout();
           this._router.navigateByUrl("/");
           return throwError(err);
@@ -177,7 +177,7 @@ export class EditComponent implements OnInit, AfterViewInit {
         finalize(() => this.isLoadingResults = false)
       )
       .subscribe();
-  };
+  }
 
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
@@ -188,16 +188,22 @@ export class EditComponent implements OnInit, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this._userService.getUsers()
+          let bodydata: UserSearch = {
+            termino: "",
+            longitud_pagina: this.paginator?.pageSize,
+            numero_pagina: this.paginator?.pageIndex + 1,
+          };
+
+          return this._userService.getUsers(bodydata)
             .pipe(
               catchError(() => observableOf(null))
             );
         }),
         map(data => {
-          this.pageNumber = 1;
-          this.totalRecords = 10;
+          this.pageNumber = data?.numero_pagina ?? 1;
+          this.totalRecords = data?.total_registros ?? 0;
           this.pageLength = this.paginator?.pageSize;
-          this.numberOfPages = 1;
+          this.numberOfPages = data?.cantidad_paginas ?? 0;
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = data === null;
@@ -210,7 +216,7 @@ export class EditComponent implements OnInit, AfterViewInit {
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
           this.resultsLength = 10;
-          return data;
+          return data.usuarios;
         }),
       )
       .subscribe(data => (this.data = data));
@@ -218,22 +224,28 @@ export class EditComponent implements OnInit, AfterViewInit {
 
   findUser() {
 
-    console.log(this.startDate.value?.toISOString());
-    console.log(this.endDate.value?.toISOString());
-
     let sDate = this.startDate.value !== null ? this.startDate.value.toISOString() : "";
     let eDate = this.endDate.value !== null ? this.endDate.value.toISOString() : "";
 
     this.isLoadingResults = true;
 
-    this._userService.getUsers()
+    let bodydata: UserSearch = {
+      termino: this.termino.value !== null ? this.termino.value : "",
+      longitud_pagina: this.paginator?.pageSize,
+      numero_pagina: this.paginator?.pageIndex + 1,
+    };
+
+    this._userService.getUsers(bodydata)
       .pipe(
         tap(data => {
-          this.data = data;
-          this.pageNumber = 1;
-          this.totalRecords = 10;
+          this.data = data.usuarios;
+
+          this.pageNumber = data?.numero_pagina ?? 1;
+          this.totalRecords = data?.total_registros ?? 0;
           this.pageLength = this.paginator?.pageSize;
-          this.numberOfPages = 1;
+          this.numberOfPages = data?.cantidad_paginas ?? 0;
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
         }),
         catchError(err => {
           console.log("Error cargando los datos de Tareas ", err);
@@ -247,6 +259,10 @@ export class EditComponent implements OnInit, AfterViewInit {
 
   get usuario() {
     return this.formEditUser.controls['usuario'];
+  }
+
+  get changePassword() {
+    return this.formEditUser.controls['changePassword'];
   }
 
   get password() {
@@ -268,49 +284,73 @@ export class EditComponent implements OnInit, AfterViewInit {
     return this.formEditUser.controls['email'];
   }
 
+  isChangePassword() {
+
+    if (this.changePassword.value) {
+      this.formEditUser.controls.password.enable();
+    } else {
+      this.formEditUser.controls.password.disable();
+    }
+
+    //Indico que active el checked de password para luego poder cancelarlo
+    this.isCheckedPassword=true;
+  }
 
   UpdateUser() {
 
-    let bodydata: UserInterface = {
-      usuario: this.usuario.value !== null ? this.usuario.value : '',
-      password: this.password.value !== null ? this.password.value : '',
-      nombre_y_apellido: this.nombre_y_apellido.value !== null ? this.nombre_y_apellido.value : '',
-      rol: this.rol.value !== null ? this.rol.value : '',
-      imagen: this.imagen.value !== null ? this.imagen.value : '',
-      email: this.email.value !== null ? this.email.value : ''
-    };
 
-    console.log(bodydata);
-    /*
-    this._userService.newUser(bodydata).subscribe(
+
+    let bodydata: UserUpdateInterface = {
+        password: this.password.value !== null ? this.password.value : '',
+        nombre_y_apellido: this.nombre_y_apellido.value !== null ? this.nombre_y_apellido.value : '',
+        rol: this.rol.value !== null ? this.rol.value : '',
+        imagen: this.imagen.value !== null ? this.imagen.value : '',
+        email: this.email.value !== null ? this.email.value : ''
+      };
+
+    this._userService.updateUser(bodydata, this.usuario.value !== null ? this.usuario.value : "").subscribe(
       {
         next: (resultado) => {
           //Guardo en el sessionStorage el usuario y el token
-          console.log(resultado)
-          if (resultado.estado) {
-            alert("Usuario creado con exito a las " + resultado.fecha_creacion);
+          if (resultado.password === "changed") {
+            alert("Modificacion de Usuario y Clave exitosa");
           } else {
-            alert("ERROR no se ha podido generar el usuario");
+            alert("Modificacion de Usuario exitosa");
           }
- 
+          this.formEditUser.reset();
         },
         error: (error) => {
           if (error.status == 403 || error.status == 401) {
- 
-            alert("ERROR al crear el usuario!!!");
+
+            alert("ERROR al modificar el usuario!!!");
           }
         },
         complete: () => console.info('Peticion Completada')
       }
-    );*/
+    );
   }
 
-  clickedRow(row: UserResponse) {
-    //console.log(row);
+  clickedRow(row: Usuario) {
     this.formEditUser.controls.nombre_y_apellido.setValue(row.nombre_y_apellido);
     this.formEditUser.controls.usuario.setValue(row.usuario);
     this.formEditUser.controls.email.setValue(row.email);
     this.formEditUser.controls.imagen.setValue(row.imagen);
+    this.selectedImagen = row.imagen;
     this.formEditUser.controls.rol.setValue(row.rol);
+    this.isformEditUserActive=false;
+    this.formEditUser.controls.changePassword.enable();
+  }
+
+  CancelForm(){
+    this.formEditUser.controls.nombre_y_apellido.setValue("");
+    this.formEditUser.controls.usuario.setValue("");
+    this.formEditUser.controls.email.setValue("");
+    this.formEditUser.controls.imagen.setValue("none.png");
+    this.selectedImagen = "none.png";
+    this.formEditUser.controls.rol.setValue("");
+    this.isformEditUserActive=true;
+    this.isCheckedPassword=false;
+    this.formEditUser.controls.changePassword.disable();
+    this.formEditUser.controls.password.disable();
   }
 }

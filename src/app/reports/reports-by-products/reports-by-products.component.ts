@@ -215,7 +215,7 @@ export class ReportsByProductsComponent implements OnInit, AfterViewInit {
       cliente: this.selectedClient === "Todos" ? "" : this.selectedClient,
       fecha_fin: eDate,
       fecha_inicio: sDate,
-      producto: "",
+      producto: this.selectedProduct === "Todos" ? "" : this.selectedProduct,
       tipo: "producto",
       formato: "json",
       longitud_pagina: this.paginator?.pageSize ?? 25,

@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, throwError } from 'rxjs';
 import { User } from "../models/user";
 import { UserInterface } from "../interfaces/user.interface";
-import { UserResponse } from "../interfaces/user.interface";
+import { UserResponse, Usuario, UserSearch, UserUpdateResponse, UserUpdateInterface } from "../interfaces/user.interface";
 import { Global } from "./global";
 import { Router } from '@angular/router';
 import { SecurityService } from "./security.service";
+import { DeleteComponent } from "../administration/users/delete/delete.component";
 
 @Injectable({
     providedIn: 'root'
@@ -52,49 +53,42 @@ export class UserService {
         return this._http.post(this.url + 'auth/login', parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
-   
-    newUser(userData: UserInterface): Observable<UserResponse> {
+    newUser(userData: UserInterface): Observable<Usuario> {
+
         let parametros = JSON.stringify(userData);
         
-        return this._http.post<UserResponse>(this.url + 'usuarios', parametros, { headers: this.agregarAuthorizationHeader() });
+        return this._http.post<Usuario>(this.url + 'usuarios', parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
-     /**************************************************************************************************************/
+    updateUser(userData: UserUpdateInterface, user: string): Observable<UserUpdateResponse> {
+        let parametros;
 
-    updateColaborador(proyecto: any): Observable<any> {
-        let params = JSON.stringify(proyecto);
-    
-        return this._http.put(this.url + 'editar-colaborador', params, { headers: this.agregarAuthorizationHeader() });
-    }
-
-    private isNoAutorizado(e: any): boolean {
-        //console.log("Entre en is");
-        if (e.status == 400 || e.status == 401 || e.status == 403 || e.status == 500) {
-            //alert("Usuario o Password incorrecta");
-            this._router.navigateByUrl('/');
-            return true;
+        if(userData.password.length>5){
+            parametros = JSON.stringify(userData);
+        }else{
+            let {password, ...userDataNew} = userData;
+            parametros = JSON.stringify(userDataNew);
         }
-        return false;
+        
+        return this._http.patch<UserUpdateResponse>(this.url + 'usuarios/' + user, parametros, { headers: this.agregarAuthorizationHeader() });
     }
 
-    
-
-    
-    getUsers(): Observable<UserResponse[]>{
-    
-        return this._http.get<UserResponse[]>(this.url+'usuarios', {headers: this.agregarAuthorizationHeader()});
+    getUsers(bodydata: UserSearch): Observable<UserResponse>{
+        let find = "usuarios?";
+        if(bodydata.termino){
+            find = find + "termino=" + bodydata.termino + "&";
+        }
+        if(bodydata.longitud_pagina){
+            find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
+        }
+        if(bodydata.numero_pagina){
+            find = find + "numero_pagina=" + bodydata.numero_pagina;
+        }
+        return this._http.get<UserResponse>(this.url+find, {headers: this.agregarAuthorizationHeader()});
     }
 
-    /*
-    getColaborador(id: any): Observable<any>{
-        let parametos = JSON.stringify(id);
-        let headers = new HttpHeaders().set('content-type', 'application/json');
-
-        return this._http.post(this.url+'colaborador', parametos, {headers: headers});
-    }*/
-
-    deleteColaborador(id:any): Observable<any>{
+    deleteUser(user: string): Observable<any>{
     
-        return this._http.delete(this.url+'borrar-colaborador/'+id, {headers: this.agregarAuthorizationHeader()});
+        return this._http.delete(this.url+'usuarios/'+ user, {headers: this.agregarAuthorizationHeader()});
     }
 }

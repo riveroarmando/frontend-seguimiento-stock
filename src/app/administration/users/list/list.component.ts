@@ -22,6 +22,7 @@ import { ClientResult } from '../../../interfaces/client.interface';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductsResult } from '../../../interfaces/product.interface';
 import { ProductsSearch } from '../../../interfaces/product.interface';
+import { Usuario, UserSearch } from '../../../interfaces/user.interface';
 
 
 /*Angular Material */
@@ -39,7 +40,7 @@ import {provideNativeDateAdapter} from '@angular/material/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 
 import { catchError, finalize, tap, throwError } from 'rxjs';
-import { UserResponse } from '../../../interfaces/user.interface';
+
 
 const MATERIAL_MODULES = [MatDatepickerModule, MatSelectModule, MatTableModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSortModule, MatPaginatorModule, MatProgressSpinnerModule];
 
@@ -55,10 +56,10 @@ const MATERIAL_MODULES = [MatDatepickerModule, MatSelectModule, MatTableModule, 
 export class ListComponent implements OnInit, AfterViewInit {
 public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_creacion', 'estado', 'imagen', 'email', 'rol'];
   public url: string;
-  public data: UserResponse[] = [];
+  public data: Usuario[] = [];
   public pageNumber: number = 0;
   public totalRecords: number = 0;
-  public pageLength: number = 17;
+  public pageLength: number = 19;
   public numberOfPages: number = 0;
   public isLoadingResults: boolean = true;
   public resultsLength = 0;
@@ -114,32 +115,6 @@ public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_crea
   ngOnInit(): void {
   }
 
-  /*********************************TABLA*********************************************/
-
-  loadTaskList() {
-
-    this.isLoadingResults = true;
-
-    this._userService.getUsers()
-      .pipe(
-        tap(data => {
-          this.data = data;
-          this.pageNumber = 1;
-          this.totalRecords = data.length;
-          this.pageLength = 17;
-          this.numberOfPages = 1;
-        }),
-        catchError(err => {
-          console.log("Error cargando los datos de Tareas ", err);
-          this._securityService.logout();
-          this._router.navigateByUrl("/");
-          return throwError(err);
-        }),
-        finalize(() => this.isLoadingResults = false)
-      )
-      .subscribe();
-  };
-
   ngAfterViewInit() {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -148,17 +123,25 @@ public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_crea
       .pipe(
         startWith({}),
         switchMap(() => {
+          
           this.isLoadingResults = true;
-          return this._userService.getUsers()
+          
+          let bodydata: UserSearch = {
+            termino: "",
+            longitud_pagina: this.paginator?.pageSize,
+            numero_pagina: this.paginator?.pageIndex + 1,
+          };
+          
+          return this._userService.getUsers(bodydata)
             .pipe(
               catchError(() => observableOf(null))
             );
         }),
         map(data => {
-          this.pageNumber = 1;
-          this.totalRecords = 10;
+          this.pageNumber = data?.numero_pagina ?? 1;
+          this.totalRecords = data?.total_registros ?? 0;
           this.pageLength = this.paginator?.pageSize;
-          this.numberOfPages = 1;
+          this.numberOfPages = data?.cantidad_paginas ?? 0;
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = data === null;
@@ -170,8 +153,8 @@ public displayedColumns: string[] = ['nombre_y_apellido', 'usuario', 'fecha_crea
           // Only refresh the result length if there is new data. In case of rate
           // limit errors, we do not want to reset the paginator to zero, as that
           // would prevent users from re-triggering requests.
-          this.resultsLength = 10;
-          return data;
+          this.resultsLength = data.total_registros;
+          return data.usuarios;
         }),
       )
       .subscribe(data => (this.data = data));

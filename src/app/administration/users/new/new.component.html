@@ -22,13 +22,32 @@
         <div class="form-row">
             <mat-form-field appearance="outline" style="width: 50%;" floatLabel="auto">
                 <mat-label>Rol</mat-label>
-                <input matInput type="text" formControlName="rol" #rol autofocus>
+                <mat-select formControlName="rol" #rol name="rol"
+                    [(value)]="selectedRol">
+                    @for (rol of roles; track roles) {
+                    <mat-option [value]="rol.nombre_rol">{{rol.nombre_rol}}</mat-option>
+                    }
+                </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" style="width: 50%;" floatLabel="auto">
+            <mat-form-field appearance="outline" style="width: 40%;" floatLabel="auto">
                 <mat-label>Imagen</mat-label>
-                <input matInput type="text" formControlName="imagen" #imagen>
+                <mat-select formControlName="imagen" #imagen name="imagen"
+                    [(value)]="selectedImagen">
+                    @for (avatar of avatares; track avatares) {
+                    <mat-option [value]="avatar">{{avatar}}</mat-option>
+                    }
+                </mat-select>
             </mat-form-field>
+            
+            <div class="avatar">
+                @if (selectedImagen) {
+                    <img src="../../../../assets/img/{{selectedImagen}}">
+                }@else {
+                    <img src="../../../../assets/img/none.png">
+                }
+            </div>
+            
 
         </div>
 

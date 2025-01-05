@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { from } from 'rxjs';
 
 /*Angular Material */
@@ -28,5 +28,4 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class UsersComponent {
 
-  
 }
