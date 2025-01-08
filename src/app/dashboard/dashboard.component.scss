@@ -1,0 +1,53 @@
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col-6 {
+    width: 50%;
+    border-style: inset;
+    border: 1px solid red;
+}
+
+.col-12 {
+    width: 100%;
+    border-style: inset;
+    border: 1px solid red;
+}
+
+.w-kpi {
+    height: 160px;
+}
+
+.w-graphic {
+    height: 500px;
+    //    overflow: hidden;
+}
+
+.form-flex-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.button-row {
+    display: table-cell;
+    max-width: 600px;
+    margin-left: 20px;
+}
+
+.button-row .mat-mdc-button-base {
+    margin: 0px 0px 0px 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    width: 120px;
+}

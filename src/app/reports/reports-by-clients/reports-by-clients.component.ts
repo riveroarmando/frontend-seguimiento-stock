@@ -127,6 +127,8 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   /*********************************TABLA*********************************************/
 
   loadClients() {
+    this.isLoadingResults = true
+    ;
     this._reportsService.getClients()
       .pipe(
         tap(data => {
@@ -233,6 +235,7 @@ export class ReportsByClientsComponent implements OnInit, AfterViewInit {
   }
 
   onChangeClient() {
+    this.isLoadingResults = true;
     this._reportsService.getProducts(this.selectedClient)
       .pipe(
         tap(product => {

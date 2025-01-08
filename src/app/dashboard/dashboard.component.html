@@ -1,1 +1,47 @@
-<p>dashboard works!</p>
+<div class="column">
+    
+    <div class="row w-kpi">
+        <div class="col-12">
+            <h2>KPI</h2>
+        </div>
+    </div>
+
+    <div class="row w-graphic">
+        
+        <div class="col-6">
+            <h2>Bar Chart Solution Center x Mes</h2>
+            <app-bar-chart [data]="data" _id="barchart1"></app-bar-chart>
+        </div>
+        
+        <div class="col-6">
+            
+            <div class="form-flex-container">
+                <mat-form-field appearance="outline" floatLabel="auto">
+                    <mat-label>Mes</mat-label>
+                    <mat-select #mesSeleccionado name="mes"
+                        [(value)]="selectedMonth" (selectionChange)="onChangeMonth()">
+                        @for (mes of months; track months) {
+                        <mat-option [value]="mes">{{mes}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <div class="button-row">
+                    <div class="form-flex-container">
+                        <div class="button-container">
+                            <button mat-fab extended color="primary" (click)="cambiar()">
+                                <mat-icon>input</mat-icon>
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <app-bar-chart [data]="data1" _id="barchart2"></app-bar-chart>
+        
+        </div>
+
+    </div>
+</div>
