@@ -11,21 +11,14 @@ import { SecurityService } from '../../services/security.service';
 import { UserService } from '../../services/user.service';
 import { ReportsService } from '../../services/reports.service';
 import {FileManagerService} from '../../services/file-manager.service'
-import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { Global } from '../../services/global';
-import { RouterModule } from '@angular/router';
 /*Para que funcione httpclient */
 import { HttpClientModule } from '@angular/common/http';
 
-import { TaskSearch } from '../../interfaces/task-search.interface';
-import { Tarea } from '../../interfaces/tareas.interface';
 import { Client, Cliente } from '../../interfaces/client.interface';
 import { Product, Producto } from '../../interfaces/product.interface';
-import { ProductsResult } from '../../interfaces/product.interface';
-import { ProductsSearch } from '../../interfaces/product.interface';
 import { ReportSearch } from '../../interfaces/report.interface';
-import { ClientReportResult } from '../../interfaces/report.interface';
 import { ResultadoPorCliente } from '../../interfaces/report.interface';
 
 

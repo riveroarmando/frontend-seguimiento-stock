@@ -5,120 +5,76 @@ import { User } from "../models/user";
 import { Global } from "./global";
 import { Router } from '@angular/router';
 import { SecurityService } from "./security.service";
-import { TaskResult } from "../interfaces/tareas.interface";
-import { TaskSearch } from "../interfaces/task-search.interface";
 import { Client } from "../interfaces/client.interface";
 import { Product, ProductsSearch } from "../interfaces/product.interface";
 import { ProductsResult } from "../interfaces/product.interface";
 import { ReportSearch } from "../interfaces/report.interface";
 import { ClientReportResult } from "../interfaces/report.interface";
 import { ProductReportResult } from "../interfaces/report.interface";
+import { DataChartSolutionCenter } from '../interfaces/dashboard.interface';
+import { DataChartXClient } from '../interfaces/dashboard.interface';
+import { DataChartSearh } from '../interfaces/dashboard.interface';
 
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DashboardService {
-  public url: string;
-  private _usuario!: User;
-  private httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-  
-  constructor(
-      public _http: HttpClient,
-      private _router: Router,
-      private _securityService: SecurityService
-  ) {
-      this.url = Global.url;
-  }
+    public url: string;
+    private _usuario!: User;
+    private httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-  private agregarAuthorizationHeader(){
-      var token=this._securityService.token;
-      if(token!=null){
-          return this.httpHeaders.append('Authorization', 'Bearer ' + token);
-      }
-      return this.httpHeaders;
-  }
-  
-  getClients(): Observable<Client>{
+    constructor(
+        public _http: HttpClient,
+        private _router: Router,
+        private _securityService: SecurityService
+    ) {
+        this.url = Global.url;
+    }
 
-      return this._http.get<Client>(this.url+ 'clientes', {headers: this.agregarAuthorizationHeader()});
+    private agregarAuthorizationHeader() {
+        var token = this._securityService.token;
+        if (token != null) {
+            return this.httpHeaders.append('Authorization', 'Bearer ' + token);
+        }
+        return this.httpHeaders;
+    }
 
-  }
+    getClients(): Observable<Client> {
 
-  getProducts(cliente: string): Observable<Product>{
+        return this._http.get<Client>(this.url + 'clientes', { headers: this.agregarAuthorizationHeader() });
 
-      //return this._http.get<Product[]>(this.url+ 'productos', {headers: this.agregarAuthorizationHeader()});
-      return this._http.get<Product>(this.url+ "productos", {
-          params: new HttpParams()
-          .set('cliente', cliente),
-          headers: this.agregarAuthorizationHeader()
-      });
+    }
 
-  }
+    getProducts(cliente: string): Observable<Product> {
 
-  getReportsListClient(bodydata: ReportSearch): Observable<ClientReportResult>{
-      let find = "reportes?";
-      if(bodydata.cliente){
-          find = find + "cliente=" + bodydata.cliente + "&";
-      }
-      if(bodydata.producto){
-          find = find + "producto=" + bodydata.producto + "&";
-      }
-      if(bodydata.fecha_inicio){
-          find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
-      }
-      if(bodydata.fecha_fin){
-          find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
-      }
-      if(bodydata.tipo){
-          find = find + "tipo=" + bodydata.tipo + "&";
-      }
-      if(bodydata.formato){
-          find = find + "formato=" + bodydata.formato + "&";
-      }
-      if(bodydata.longitud_pagina){
-          find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
-      }
-      if(bodydata.numero_pagina){
-          find = find + "numero_pagina=" + bodydata.numero_pagina;
-      }
+        //return this._http.get<Product[]>(this.url+ 'productos', {headers: this.agregarAuthorizationHeader()});
+        return this._http.get<Product>(this.url + "productos", {
+            params: new HttpParams()
+                .set('cliente', cliente),
+            headers: this.agregarAuthorizationHeader()
+        });
 
-      
-      //console.log(this.url+ find);
-      return this._http.get<ClientReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
-  }
+    }
+
+    getDashboardImpresionPlanta(): Observable<DataChartSolutionCenter> {
+
+        return this._http.get<DataChartSolutionCenter>(this.url + 'dashboard/chart-impresion-planta', { headers: this.agregarAuthorizationHeader() });
+    }
 
 
-  getReportsListProduct(bodydata: ReportSearch): Observable<ProductReportResult>{
-      let find = "reportes?";
-      if(bodydata.cliente){
-          find = find + "cliente=" + bodydata.cliente + "&";
-      }
-      if(bodydata.producto){
-          find = find + "producto=" + bodydata.producto + "&";
-      }
-      if(bodydata.fecha_inicio){
-          find = find + "fecha_inicio=" + bodydata.fecha_inicio + "&";
-      }
-      if(bodydata.fecha_fin){
-          find = find + "fecha_fin=" + bodydata.fecha_fin + "&";
-      }
-      if(bodydata.tipo){
-          find = find + "tipo=" + bodydata.tipo + "&";
-      }
-      if(bodydata.formato){
-          find = find + "formato=" + bodydata.formato + "&";
-      }
-      if(bodydata.longitud_pagina){
-          find = find + "longitud_pagina=" + bodydata.longitud_pagina + "&";
-      }
-      if(bodydata.numero_pagina){
-          find = find + "numero_pagina=" + bodydata.numero_pagina;
-      }
+    getDashboardImpresionClient(bodydata: DataChartSearh): Observable<DataChartXClient> {
 
-      
-      //console.log(this.url+ find);
-      return this._http.get<ProductReportResult>(this.url+ find, {headers: this.agregarAuthorizationHeader()});
-  }
+        let find = "dashboard/chart-impresion-mes-cliente?";
+
+        if (bodydata.m) {
+            find = find + "m=" + bodydata.m + "&";
+        }
+        if (bodydata.a) {
+            find = find + "a=" + bodydata.a;
+        }
+
+        return this._http.get<DataChartXClient>(this.url + find, { headers: this.agregarAuthorizationHeader() });
+    }
 
 }

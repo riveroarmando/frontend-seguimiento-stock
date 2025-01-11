@@ -12,3 +12,23 @@ export interface DataChartTotal {
     hojas:    number;
     imagenes: number;
 }
+
+
+export interface DataChartSolutionCenter {
+    color:    string[];
+    hojas:    number[];
+    imagenes: number[];
+    mes:      string[];
+}
+
+export interface DataChartXClient {
+    color:    string[];
+    hojas:    string[];
+    imagenes: string[];
+    clientes: string[];
+}
+
+export interface DataChartSearh {
+    m:    number;
+    a:     number;
+}

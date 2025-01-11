@@ -24,8 +24,9 @@ export class BarChartComponent implements OnInit, OnChanges {
   public myChart: any;
 
   ngAfterViewInit(){
+    //this.isLoading=false;
     this.RenderChartSimple([], [], [], "imagenes", "bar", this._id);
-    this.isLoading=false;
+    
   }
   ngOnChanges(changes: SimpleChanges): void {
 
@@ -35,15 +36,18 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
   }
 
-  @Input({ required: true }) data: any;
+  @Input({ required: true }) data: any[]=[];
+  @Input({ required: true }) labels: any[]=[];
+  @Input({ required: true }) colors: any[]=[];
   @Input() _id!: string;
 
   ngOnInit(): void {
-    //this.RenderChartSimple([], [], [], "imagenes", "bar", this._id);
+    
   }
 
 
   RenderChartSimple(labelData: any, valueData: any, colorData: any, unitData: any, type: any, id: any) {
+    console.log({labelData, valueData, colorData, unitData, type, id});
     this.myChart = new Chart(id, {
       type: type,
       data: {
@@ -80,6 +84,7 @@ export class BarChartComponent implements OnInit, OnChanges {
         }
       }
     });
+    this.isLoading=false;
   }
 
   RenderChartDoble(labelData: any, valueData1: any, colorData1: any, type1: any, valueData2: any, colorData2: any, type2: any, id: any) {
@@ -114,10 +119,11 @@ export class BarChartComponent implements OnInit, OnChanges {
   }
 
   renderChart() {
-    this.myChart.data.labels=this.data.mes;
-    this.myChart.data.datasets[0].backgroundColor=this.data.color;
-    this.myChart.data.datasets[0].borderColor=this.data.color;
-    this.myChart.data.datasets[0].data = this.data.imagenes;
+    //console.log({labels: this.labels, valueData, colorData, unitData, type, id});
+    this.myChart.data.labels=this.labels;
+    this.myChart.data.datasets[0].backgroundColor=this.colors;
+    this.myChart.data.datasets[0].borderColor=this.colors;
+    this.myChart.data.datasets[0].data = this.data;
     this.myChart.update();
   }
 }

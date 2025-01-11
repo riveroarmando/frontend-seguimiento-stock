@@ -82,11 +82,28 @@ export class MenuComponent {
           icon: 'account_box',
           label: 'Usuarios',
           route: 'users',
-        },
+        }/*,
         {
           icon: 'settings',
           label: 'Settings',
           route: 'settings',
+        }*/
+      ]
+    },
+    {
+      icon: 'article',
+      label: 'Articulos',
+      route: 'reports',
+      subItems: [
+        {
+          icon: 'inventory_2',
+          label: 'Inventario',
+          route: 'client',
+        },
+        {
+          icon: 'square_dot',
+          label: 'Producto',
+          route: 'product',
         }
       ]
     }
