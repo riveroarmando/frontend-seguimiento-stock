@@ -8,7 +8,13 @@ import { ReportsByClientsComponent } from './reports/reports-by-clients/reports-
 import { ReportsByProductsComponent } from './reports/reports-by-products/reports-by-products.component';
 import { AdministrationComponent } from './administration/administration.component';
 import { UsersComponent } from './administration/users/users.component';
-import { SettingsComponent } from './administration/settings/settings.component';
+import { ArticlesComponent } from './administration/articles/articles.component';
+import { SuppliersComponent } from './administration/suppliers/suppliers.component';
+import { ArticleComponent } from './article/article.component';
+import { InventoryComponent } from './article/inventory/inventory.component';
+import { IngresoComponent } from './article/ingreso/ingreso.component';
+import { EgresoComponent } from './article/egreso/egreso.component';
+import { OrdersComponent } from './article/orders/orders.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -27,7 +33,16 @@ export const routes: Routes = [
             { path: 'administration', component: AdministrationComponent, 
                 children: [
                     { path: 'users', component: UsersComponent }, 
-                    { path: 'settings', component: SettingsComponent },
+                    { path: 'articles', component: ArticlesComponent },
+                    { path: 'suppliers', component: SuppliersComponent },
+                ]
+            },
+            { path: 'articulos', component: ArticleComponent, 
+                children: [
+                    { path: 'inventory', component: InventoryComponent }, 
+                    { path: 'ingreso', component: IngresoComponent },
+                    { path: 'egreso', component: EgresoComponent },
+                    { path: 'orders', component: OrdersComponent },
                 ]
             },
         ]

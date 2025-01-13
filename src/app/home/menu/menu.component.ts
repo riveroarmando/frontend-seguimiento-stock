@@ -82,31 +82,46 @@ export class MenuComponent {
           icon: 'account_box',
           label: 'Usuarios',
           route: 'users',
-        }/*,
+        },
         {
-          icon: 'settings',
-          label: 'Settings',
-          route: 'settings',
-        }*/
+          icon: 'article',
+          label: 'Articulos',
+          route: 'articles',
+        },
+        {
+          icon: 'man',
+          label: 'Proveedores',
+          route: 'suppliers',
+        }
       ]
     },
     {
       icon: 'article',
       label: 'Articulos',
-      route: 'reports',
+      route: 'articulos',
       subItems: [
         {
           icon: 'inventory_2',
           label: 'Inventario',
-          route: 'client',
+          route: 'inventory',
         },
         {
-          icon: 'square_dot',
-          label: 'Producto',
-          route: 'product',
+          icon: 'add_box',
+          label: 'Ingreso',
+          route: 'ingreso',
+        },
+        {
+          icon: 'indeterminate_check_box',
+          label: 'Consumo',
+          route: 'egreso',
+        },
+        {
+          icon: 'work_history',
+          label: 'Ordenes',
+          route: 'orders',
         }
       ]
-    }
+    },
   ]);
 
   profilePicSize= computed(()=> this.sideNavCollapsed() ? '32' : '100');

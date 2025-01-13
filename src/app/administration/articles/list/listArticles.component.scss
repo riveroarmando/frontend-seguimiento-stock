@@ -37,57 +37,33 @@
     }
 }
 
-.mat-column-nombre_y_apellido {
-    width: 8%;
-    max-width: 10%;
+.mat-column-codigo {
+    width: 15%;
+    max-width: 15%;
     border-right: 1px solid black;
     padding-right: 24px;
     text-align: center;
 }
 
-.mat-column-usuario {
-    width: 8%;
-    max-width: 10%;
+.mat-column-descripcion {
+    width: 40%;
+    max-width: 40%;
     border-right: 1px solid black;
     padding-right: 24px;
     text-align: center;
 }
 
-.mat-column-fecha_creacion {
-    width: 10%;
-    max-width: 600px;
+.mat-column-unidad {
+    width: 15%;
+    max-width: 15%;
     border-right: 1px solid black;
     padding-right: 24px;
     text-align: left;
 }
 
-.mat-column-estado {
-    width: 10%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-}
-
-.mat-column-imagen {
-    width: 8%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-}
-
-.mat-column-email {
-    width: 16%;
-    max-width: 10%;
-    border-right: 1px solid black;
-    padding-right: 24px;
-    text-align: center;
-}
-
-.mat-column-rol {
-    width: 16%;
-    max-width: 10%;
+.mat-column-proveedores {
+    width: 30%;
+    max-width: 30%;
     padding-right: 24px;
     text-align: center;
 }
